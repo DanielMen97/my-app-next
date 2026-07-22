@@ -1,10 +1,8 @@
-'use client';
-
+"use client"
 import {
   Button,
   Input,
   Checkbox,
-  Radio,
   RadioNative,
   Switch,
   Select,
@@ -15,6 +13,7 @@ import {
 } from "@ui-library/react";
 import styles from "./page.module.css";
 import { TextField } from "@mui/material";
+import { SubmitEvent } from "react";
 
 const paises = [
   { label: "Argentina", value: "ar" },
@@ -25,10 +24,11 @@ const paises = [
   { label: "Uruguay", value: "uy" },
 ];
 
-const planes = [
-  { label: "Básico", value: "basico" },
-  { label: "Estándar", value: "estandar" },
-  { label: "Premium", value: "premium" },
+const estadoCivilOptions = [
+  { label: "Soltero/a", value: "soltero" },
+  { label: "Casado/a", value: "casado" },
+  { label: "Divorciado/a", value: "divorciado" },
+  { label: "Viudo/a", value: "viudo" },
 ];
 
 const tabs = [
@@ -37,57 +37,46 @@ const tabs = [
   { value: "navegacion", label: "Navegación" },
 ];
 
+function onHandleSubmit (event:SubmitEvent<HTMLFormElement>) {
+  event.preventDefault()
+  const form = new FormData(event.currentTarget)
+
+  const objetoDatos = Object.fromEntries(form.entries())
+
+  console.log(objetoDatos)
+}
+
 export default function Home() {
   return (
-    <form className={styles.page}>
-      <div className={styles.header}>
-        <BackButton onClick={() => alert("Volver")} />
-        <h1>Formulario de Prueba</h1>
+    <form className={styles.form} onSubmit={onHandleSubmit} autoComplete="off">
+      <Tabs tabs={tabs} defaultValue="datos"></Tabs>
+      <Input label="Nombre" showCounter maxLength={200} name="name" autoComplete="off"/>
+      <Input label="Apellido" name="lastname"/>
+      <Input label="Email" type="email" name="email" autoComplete="off"/>
+      <Input label="Teléfono" type="tel" name="phone"/>
+      <Select label="País" options={paises} placeholder="Selecciona un país" name="country" />
+      <Input label="Ciudad" disabled />
+      <div className={styles.radioGroup}>
+        <RadioNative name="document" label="Pasaporte"  value="passport"/>
+        <RadioNative name="document" label="Cedula" value="id"/>
       </div>
-
-      <div className={styles.tabs}>
-        <Tabs tabs={tabs} defaultValue="datos" />
+      <Select
+        label="Estado Civil"
+        options={estadoCivilOptions}
+        placeholder="Selecciona estado civil"
+        name="civil"
+      />
+      <div className={styles.checkboxGroup}>
+        <Checkbox label="Recibir newsletter" name="newsletter"/>
+        <Checkbox label="Aceptar términos y condiciones" name="terms"/>
       </div>
-
-      <div className={styles.fields}>
-        <Input label="Nombre completo" maxLength={50} showCounter />
-        <Input label="Correo electrónico" type="email" />
-         {/* <Input label="Contraseña" type="password" error="Mínimo 8 caracteres" /> */}
-        <TextField
-          id="standard-helperText"
-          label="Helper text"
-          defaultValue="Default Value"
-          helperText="Some important text"
-          variant="outlined"
-        />
-
-        <Select label="País" options={paises} placeholder="Selecciona tu país" />
-
-        <div>
-          <p className={styles.genderLabel}>Género</p>
-          <RadioNative label="Masculino" name="genero" value="m" />
-          <RadioNative label="Femenino" name="genero" value="f" />
-          <RadioNative label="Otro" name="genero" value="o" />
-        </div>
-
-        <Radio options={planes} defaultValue="estandar" />
-
-        <Checkbox label="Acepto los términos y condiciones" />
-
-        <Switch label="Recibir notificaciones por correo" />
-
-        <div className={styles.actions}>
-          <Button type="submit" variant="main">Enviar</Button>
-          <Button type="button" variant="secondary">Cancelar</Button>
-          <Button type="button" pressed>Presionado</Button>
-          <Button type="button" disabled>Deshabilitado</Button>
-        </div>
-      </div>
-
-      <div className={styles.navigation}>
-        <HomeButton tooltip="Inicio" side="top" />
-        <LogoutButton tooltip="Cerrar sesión" side="top" />
-      </div>
+      <Switch label="Notificaciones por email" name="noti"/>
+      <Button type="submit" variant="main">
+        Enviar Formulario
+      </Button>
+      <Button type="button" variant="main">
+        Limpiar
+      </Button>
     </form>
   );
 }
